@@ -102,3 +102,6 @@ go.work
 
 .env
 
+# SSL Certifications
+nginx/certs/
+
