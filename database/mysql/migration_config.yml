@@ -1,0 +1,7 @@
+production:
+  dialect: mysql
+  datasource: root:root@(localhost:3306)/eco-go?parseTime=true
+  dir: database/mysql/migrations
+  table: migrations
+
+
