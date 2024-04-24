@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/abbasfisal/ecommerce-go/services"
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"html/template"
+	"log"
 )
 
 type AdminHandler struct {
@@ -17,8 +19,24 @@ func NewAdminHandler(srv services.AdminService) AdminHandler {
 }
 
 func (h AdminHandler) Login(c *gin.Context) {
-	//validation
 
-	h.srv.List(c)
-	c.JSON(http.StatusOK, gin.H{"message ": "this is login"})
+	// check session existence and user type
+
+	// else show login form
+
+	tmpl, err := template.ParseFiles("template/admin/login.html")
+	if err != nil {
+		fmt.Fprint(c.Writer, err)
+		return
+	}
+	type Data struct {
+		Name string
+	}
+
+	mydata := Data{Name: "reza"}
+	err2 := tmpl.Execute(c.Writer, mydata)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
 }
