@@ -4,6 +4,7 @@ import (
 	"github.com/abbasfisal/ecommerce-go/config"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"log"
 )
 
 type ServerApis struct {
@@ -30,5 +31,8 @@ func (s ServerApis) Run() {
 
 	s.SetAdminRoutes(group)
 
-	engin.Run(":8080")
+	err := engin.Run(":8080")
+	if err != nil {
+		log.Fatal("server error : ", err)
+	}
 }
