@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/abbasfisal/ecommerce-go/cmd/http_server/routes"
 	"github.com/abbasfisal/ecommerce-go/config"
 	"github.com/abbasfisal/ecommerce-go/database/mysql"
 	"log"
@@ -13,5 +14,7 @@ func main() {
 	if err != nil {
 		log.Fatal("database : ", err)
 	}
+
+	routes.NewServerApis(mysql.Get(), cnf).Run()
 
 }
