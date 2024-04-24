@@ -24,6 +24,7 @@ func NewServerApis(db *gorm.DB, config *config.Config) ServerApis {
 func (s ServerApis) Run() {
 
 	engin := gin.New()
+	engin.Static("/public", "./public")
 
 	SetHealthRoutes(engin.Group("/health"))
 
@@ -31,7 +32,7 @@ func (s ServerApis) Run() {
 
 	s.SetAdminRoutes(group)
 
-	err := engin.Run(":8080")
+	err := engin.Run(":" + s.Config.AppPort)
 	if err != nil {
 		log.Fatal("server error : ", err)
 	}
