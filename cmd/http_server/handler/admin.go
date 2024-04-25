@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/abbasfisal/ecommerce-go/services"
 	"github.com/gin-gonic/gin"
-	"html/template"
-	"log"
+	"net/http"
 )
 
 type AdminHandler struct {
@@ -18,25 +17,30 @@ func NewAdminHandler(srv services.AdminService) AdminHandler {
 	}
 }
 
+func (h AdminHandler) ShowLogin(c *gin.Context) {
+	fmt.Println("show login form")
+	c.HTML(http.StatusOK, "login.html", gin.H{
+		"name": "ali",
+	})
+}
+
+type Req struct {
+	UserName string `json:"username" form:"username" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required"`
+}
+
 func (h AdminHandler) Login(c *gin.Context) {
 
-	// check session existence and user type
+	fmt.Println("post login form")
+	var r Req
+	err := c.ShouldBind(&r)
+	fmt.Println(r)
 
-	// else show login form
-
-	tmpl, err := template.ParseFiles("template/admin/login.html")
 	if err != nil {
-		fmt.Fprint(c.Writer, err)
+		c.HTML(http.StatusBadRequest, "login.html", gin.H{"Err": err.Error()})
 		return
 	}
-	type Data struct {
-		Name string
-	}
 
-	mydata := Data{Name: "reza"}
-	err2 := tmpl.Execute(c.Writer, mydata)
-	if err2 != nil {
-		log.Fatal(err2)
-	}
+	c.HTML(http.StatusOK, "login.html", gin.H{"message": "you successfully registered"})
 
 }
