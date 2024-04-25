@@ -15,5 +15,6 @@ func (s ServerApis) SetAdminRoutes(r *gin.RouterGroup) {
 	srv := services.NewAdminService(repo)
 	hnd := handler.NewAdminHandler(srv)
 
-	grp.GET("/login", hnd.Login)
+	grp.GET("/login", hnd.ShowLogin)
+	grp.POST("/login", hnd.Login)
 }
