@@ -24,6 +24,8 @@ func NewServerApis(db *gorm.DB, config *config.Config) ServerApis {
 func (s ServerApis) Run() {
 
 	engin := gin.New()
+	engin.LoadHTMLGlob("./template/admin/*")
+
 	engin.Static("/public", "./public")
 
 	SetHealthRoutes(engin.Group("/health"))
