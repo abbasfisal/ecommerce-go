@@ -16,7 +16,7 @@ func InitClient(config *config.Config) error {
 
 	dsn := config.Db.UserName + ":" + config.Db.Password + "@tcp" + "(" + config.Db.Host + ":" + config.Db.Port + ")/" + config.Db.Name + "?" + "parseTime=true&loc=Local"
 	fmt.Println("dsn : ", dsn)
-	dbClient, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	dbClient, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	db, err := dbClient.DB()
 	if err != nil {
@@ -26,7 +26,7 @@ func InitClient(config *config.Config) error {
 	if err != nil {
 		return err
 	}
-
+	fmt.Println("Databases: connected successfully")
 	return nil
 }
 
