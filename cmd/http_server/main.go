@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/abbasfisal/ecommerce-go/cmd/http_server/routes"
-	"github.com/abbasfisal/ecommerce-go/database/mysql"
 	"github.com/abbasfisal/ecommerce-go/internal/config"
+	"github.com/abbasfisal/ecommerce-go/internal/database/mysql"
 	"log"
 )
 
