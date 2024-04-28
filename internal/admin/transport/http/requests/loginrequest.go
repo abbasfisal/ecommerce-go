@@ -1,4 +1,4 @@
-package admin
+package requests
 
 type LoginRequest struct {
 	UserName string `form:"username" validate:"required"`
