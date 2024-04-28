@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"fmt"
-	"github.com/abbasfisal/ecommerce-go/config"
+	"github.com/abbasfisal/ecommerce-go/internal/config"
 	"gorm.io/driver/mysql"
 	_ "gorm.io/driver/mysql"
 	"gorm.io/gorm"
