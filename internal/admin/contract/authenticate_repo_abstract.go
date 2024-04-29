@@ -9,4 +9,5 @@ import (
 type AuthRepo interface {
 	List(c context.Context) error
 	CheckAdminExists(c context.Context, loginReq requests.LoginRequest) (entity.User, error)
+	GetUserBy(phoneNumber string) (entity.User, error)
 }
