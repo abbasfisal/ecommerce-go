@@ -4,14 +4,11 @@ import (
 	"fmt"
 	"github.com/abbasfisal/ecommerce-go/internal/admin/contract"
 	"github.com/abbasfisal/ecommerce-go/internal/admin/transport/http/requests"
-	"github.com/abbasfisal/ecommerce-go/internal/entity"
 	sessionContract "github.com/abbasfisal/ecommerce-go/internal/session/contract"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 	"log"
 	"net/http"
-	"time"
 )
 
 type AdminHandler struct {
@@ -28,20 +25,35 @@ func NewAdminHandler(authSrv contract.AuthService, sessionSrv sessionContract.Se
 
 func (h AdminHandler) ShowLogin(c *gin.Context) {
 	fmt.Println("show login form")
-	c.HTML(http.StatusOK, "login.html", gin.H{
-		"name": "ali",
-	})
 
+	sessionID, err := c.Cookie("session-admin")
+	if err == nil {
+		//cookie is existed
+		user, err := h.sessionSrv.GetUserBy(c, sessionID)
+		if err != nil || user.Type != "admin" {
+
+			c.SetCookie("session-admin", "", -1, "/", "", false, true)
+			c.HTML(http.StatusOK, "login.html", nil)
+			return
+		}
+		fmt.Println("\n -- session exist and was admin on show login form -- ")
+		c.Redirect(http.StatusMovedPermanently, "v1/admin/dashboard")
+		return
+	}
+
+	c.HTML(http.StatusOK, "login.html", nil)
+	return
 }
 
 func (h AdminHandler) Login(c *gin.Context) {
-	fmt.Println("post login form")
+	fmt.Println("\n---post login form")
 
 	var req requests.LoginRequest
 	err := c.ShouldBind(&req)
 	if err != nil {
 		log.Println("binding error : ", err)
 		c.HTML(http.StatusBadRequest, "500.html", nil)
+		c.Abort()
 		return
 	}
 	fmt.Println(req)
@@ -56,33 +68,44 @@ func (h AdminHandler) Login(c *gin.Context) {
 		return
 	}
 
-	//service
-	//adminCheck, checkErr := h.srv.CheckAdminExists(c, req)
-	//if checkErr != nil {
-	//	c.HTML(http.StatusUnauthorized, "login.html", gin.H{"message": "username | password was incorrect"})
-	//	c.Abort()
-	//	return
-	//}
-	//
-	////compare hashed password
-	//hashErr := bcrypt.CompareHashAndPassword([]byte(adminCheck.Password), []byte(req.Password))
-	//if hashErr != nil {
-	//	c.HTML(http.StatusUnauthorized, "login.html", gin.H{"message": "username | password was incorrect"})
-	//	c.Abort()
-	//	return
-	//}
+	user, checkErr := h.authSrv.Login(c, req)
+	if checkErr != nil {
+		c.HTML(http.StatusUnauthorized, "login.html", gin.H{
+			"message": "username | password was incorrect",
+			"meta":    checkErr,
+		})
+		c.Abort()
+		return
+	}
 
-	//generate session and store in session table
-	var session entity.Session
-	session.SessionID = uuid.New().String()
-	//session.UserID = adminCheck.ID
-	session.CreatedAt = time.Now()
-	session.UpdatedAt = session.CreatedAt
+	sessionID, cookieErr := c.Cookie("session-admin")
+	if cookieErr != nil {
+		//cookie not exist
+		session, sessErr := h.sessionSrv.Generate(c, user)
+		if sessErr != nil {
+			fmt.Println("\n --- generate session failed")
+			c.HTML(http.StatusUnauthorized, "login.html", gin.H{
+				"message": sessErr,
+			})
+			c.Abort()
+			return
+		}
+		c.SetCookie("session-admin", session.SessionID, 3600, "/", "", false, true)
 
-	c.SetCookie("session", session.SessionID, 3600, "/", "", true, true)
-	//sessionId = uuid.New()
+	} else {
+		//cookie was existed
+		user, err := h.sessionSrv.GetUserBy(c, sessionID)
+		if err != nil || user.Type != "admin" {
 
-	c.Redirect(http.StatusOK, "/dashboard")
-	//c.HTML(http.StatusOK, "dashboard.html", gin.H{"message": "you successfully registered"})
+			c.SetCookie("session-admin", "", -1, "/", "", false, true)
+			c.HTML(http.StatusUnauthorized, "login.html", gin.H{
+				"message": err,
+			})
+			c.Abort()
+			return
+		}
+	}
 
+	c.Redirect(http.StatusMovedPermanently, "v1/admin/dashboard")
+	return
 }
