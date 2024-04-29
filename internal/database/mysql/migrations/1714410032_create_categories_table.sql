@@ -5,6 +5,7 @@ CREATE TABLE categories
     title      VARCHAR(255) NOT NULL,
     slug       VARCHAR(255) NOT NULL UNIQUE,
     image      VARCHAR(255),
+    status     BOOLEAN DEFAULT TRUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME,
     deleted_at DATETIME
