@@ -23,16 +23,16 @@ func NewServerApis(db *gorm.DB, config *config.Config) ServerApis {
 func (s ServerApis) Run() {
 
 	engin := gin.New()
+	gin.SetMode(gin.DebugMode)
 	engin.LoadHTMLGlob("./template/admin/*")
-	//engin.LoadHTMLGlob("./template/*.html") //todo: try to load errors html
 
 	engin.Static("/public", "./public")
 
+	//todo : add route for 404 , 500
+
 	SetHealthRoutes(engin.Group("/health"))
 
-	group := engin.Group("/v1")
-
-	s.SetAdminRoutes(group)
+	s.SetAdminRoutes(engin)
 
 	err := engin.Run(":" + s.Config.AppPort)
 	if err != nil {
