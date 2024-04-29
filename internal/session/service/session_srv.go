@@ -20,6 +20,6 @@ func (s SessionService) GetUserBy(ctx context.Context, sessionID string) (entity
 	return s.repo.GetUserBySession(ctx, sessionID)
 }
 
-func (s SessionService) Generate(ctx context.Context, session entity.Session) (entity.Session, error) {
-	return s.repo.Generate(ctx, session)
+func (s SessionService) Generate(ctx context.Context, user entity.User) (entity.Session, error) {
+	return s.repo.Generate(ctx, user)
 }
