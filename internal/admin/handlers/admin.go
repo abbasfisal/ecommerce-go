@@ -142,12 +142,9 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 	imageFile, err := c.FormFile("image")
 	if err != nil {
 		c.HTML(http.StatusBadRequest, "create-category.html", template.Data{
-			Message:         "get image failed",
-			Error:           err.Error(),
-			ValidationError: nil,
-			StatusCode:      0,
-			Data:            nil,
-			Meta:            nil,
+			Message:    "get image failed",
+			Error:      err.Error(),
+			StatusCode: 0,
 		})
 		return
 	}
@@ -168,11 +165,8 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 
 	if catErr != nil {
 		fmt.Println("\n\t--- error from repository ", catErr)
-		err := os.Remove(imageMustStorePath)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
+		os.Remove(imageMustStorePath)
+
 		c.HTML(http.StatusBadRequest, "create-category.html", template.Data{
 			Message:         "failed to create a record to db",
 			Error:           err.Error(),
@@ -181,7 +175,6 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 			Data:            nil,
 			Meta:            nil,
 		})
-
 		return
 	}
 
@@ -190,6 +183,6 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 		Data: map[string]any{
 			"category": category,
 		},
-		Meta: nil,
 	})
+	return
 }
