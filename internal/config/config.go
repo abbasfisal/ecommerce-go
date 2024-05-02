@@ -6,11 +6,12 @@ import (
 )
 
 type Config struct {
-	AppPort    string
-	AppVersion string
-	AppDebug   bool
-	AppName    string
-	Db         Db
+	AppPort       string
+	AppVersion    string
+	AppDebug      bool
+	AppName       string
+	UploadDirPath string
+	Db            Db
 }
 
 type Db struct {
@@ -38,10 +39,11 @@ func NewConfig() *Config {
 	configViper()
 
 	return &Config{
-		AppPort:    viper.GetString("APP_PORT"),
-		AppVersion: viper.GetString("APP_VERSION"),
-		AppDebug:   viper.GetBool("APP_DEBUG"),
-		AppName:    viper.GetString("APP_NAME"),
+		AppPort:       viper.GetString("APP_PORT"),
+		AppVersion:    viper.GetString("APP_VERSION"),
+		AppDebug:      viper.GetBool("APP_DEBUG"),
+		AppName:       viper.GetString("APP_NAME"),
+		UploadDirPath: viper.GetString("UPLOAD_DIR_PATH"),
 
 		Db: Db{
 			Driver:   viper.GetString("DB_DRIVER"),
