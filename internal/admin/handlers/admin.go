@@ -153,7 +153,7 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 	imageMustStorePath := util.GenerateFilename(imageFile.Filename)
 	fmt.Println("\n--imageMustStorePath", imageMustStorePath)
 
-	if err := c.SaveUploadedFile(imageFile, imageMustStorePath); err != nil {
+	if err := c.SaveUploadedFile(imageFile, os.Getenv("UPLOAD_DIR_PATH")+"categories/"+imageMustStorePath); err != nil {
 		fmt.Println("\n--- store image error :", template.Data{
 			Message: "store image into disk failed",
 			Error:   err.Error(),
