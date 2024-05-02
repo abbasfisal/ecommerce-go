@@ -5,9 +5,41 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>create</title>
+    <title>create category</title>
 </head>
 <body>
+<h1>create a category</h1>
+<form action="/v1/admin/categories" method="post" enctype="multipart/form-data">
+    <input type="text" name="title" placeholder="enter category title">
+    <br>
+    image:<input type="file" name="image">
+    <br>
+    status:<input type="checkbox"   name="status"><br>
+    status:<input type="checkbox"   name="active">
+
+    <input type="submit" value="create new category">
+</form>
+
+{{if .Message}}
+    <br>
+    <b>Message : </b>{{.Message}}
+    <hr>
+{{end}}
+
+{{if .Error}}
+    <br>
+    <b>Error : </b>{{.Error}}
+    <hr>
+{{end}}
+
+{{if .Data}}
+    <br>
+    {{range $key,$value:=.Data}}
+        your key is {{$key}}
+        <br>
+        your value is : {{$value}}
+    {{end}}
+{{end}}
 
 </body>
 </html>
