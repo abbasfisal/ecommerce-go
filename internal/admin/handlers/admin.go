@@ -138,6 +138,7 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 	fmt.Println("\n\t --- request values", req, "\t", req.Status)
 
 	//todo: use validator pkg
+	//todo: validation for image
 
 	imageFile, err := c.FormFile("image")
 	if err != nil {
@@ -153,7 +154,8 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 	imageMustStorePath := util.GenerateFilename(imageFile.Filename)
 	fmt.Println("\n--imageMustStorePath", imageMustStorePath)
 
-	if err := c.SaveUploadedFile(imageFile, os.Getenv("UPLOAD_DIR_PATH")+"categories/"+imageMustStorePath); err != nil {
+	//todo: read upload main dir from env files
+	if err := c.SaveUploadedFile(imageFile, "media/categories/"+imageMustStorePath); err != nil {
 		fmt.Println("\n--- store image error :", template.Data{
 			Message: "store image into disk failed",
 			Error:   err.Error(),
