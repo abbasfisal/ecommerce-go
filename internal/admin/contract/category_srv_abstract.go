@@ -8,4 +8,5 @@ import (
 
 type CategoryService interface {
 	StoreCategory(ctx context.Context, req *requests.CreateCategoryRequest, imageUploadedPath string) (entity.Category, error)
+	GetAll(ctx context.Context) ([]entity.Category, error)
 }

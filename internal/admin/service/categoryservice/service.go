@@ -18,3 +18,7 @@ func (s Service) StoreCategory(ctx context.Context, req *requests.CreateCategory
 	//todo: u can also check for any errors to remove the uploaded image from disk in service or in handler
 	return s.repo.Create(ctx, req, imageUploadedPath)
 }
+
+func (s Service) GetAll(ctx context.Context) ([]entity.Category, error) {
+	return s.repo.List(ctx)
+}

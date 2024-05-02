@@ -35,3 +35,12 @@ func (c Category) Create(ctx context.Context, req *requests.CreateCategoryReques
 
 	return category, nil
 }
+
+func (c Category) List(ctx context.Context) ([]entity.Category, error) {
+	var cats []entity.Category
+	result := c.Db.Where("status", true).Find(&cats)
+	if result.RowsAffected <= 0 {
+		return cats, result.Error
+	}
+	return cats, nil
+}
