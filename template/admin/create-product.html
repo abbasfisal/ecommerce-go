@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>create product</title>
+</head>
+<body>
+<h1>create a new product</h1>
+{{/*{{if eq .StatusCode 200}}*/}}
+    categories data exists <br>
+
+    <hr>
+    <form action="/v1/admin/products" method="post" enctype="multipart/form-data">
+        <table align="center">
+            <tr>
+                <td>category</td>
+                <td>
+                    <select name="category_id">
+                        {{range $index,$value:=.Data.categories}}
+                            <option value="{{$value.ID}}">{{$value.Title}}</option>
+                        {{end}}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>title</td>
+                <td><input type="text" name="title"></td>
+            </tr>
+            <tr>
+                <td>sku</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>status</td>
+                <td><input type="checkbox" name="status"></td>
+            </tr>
+            <tr>
+                <td>quantity</td>
+                <td><input type="number" name="quantity"></td>
+            </tr>
+            <tr>
+                <td>original Price</td>
+                <td><input type="number" name="original_price"></td>
+            </tr>
+            <tr>
+                <td>sale price</td>
+                <td><input type="number" name="sale_price"></td>
+            </tr>
+            <tr>
+                <td>images</td>
+                <td><input type="file" name="images" multiple="multiple" accept="image/png , image/jpeg"></td>
+            </tr>
+            <tr>
+                <td>description</td>
+                <td>
+                    <textarea name="description" cols="30" rows="10"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="submit">
+                </td>
+            </tr>
+        </table>
+    </form>
+{{/*{{else}}*/}}
+{{/*    <h3 align="center">👀❌please create a new category</h3>*/}}
+{{/*{{end}}*/}}
+Message : {{.Message}}
+<br>
+Error : {{.Error}}
+</body>
+</html>
