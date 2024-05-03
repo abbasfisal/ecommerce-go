@@ -5,6 +5,7 @@ import (
 	"github.com/abbasfisal/ecommerce-go/internal/admin/repository"
 	adminAuthSrv "github.com/abbasfisal/ecommerce-go/internal/admin/service/authservice"
 	"github.com/abbasfisal/ecommerce-go/internal/admin/service/categoryservice"
+	"github.com/abbasfisal/ecommerce-go/internal/admin/service/productservice"
 	sessionRepoResolver "github.com/abbasfisal/ecommerce-go/internal/session/repository"
 	sessionSrvResolver "github.com/abbasfisal/ecommerce-go/internal/session/service"
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,10 @@ func (s ServerApis) SetAdminRoutes(r *gin.Engine) {
 	categoryRepo := repository.NewCategoryRepository(s.Db)
 	categorySrv := categoryservice.NewService(categoryRepo)
 
-	hnd := handlers.NewAdminHandler(authSvc, sessionSrv, categorySrv)
+	productRepo := repository.NewProductRepository(s.Db)
+	productSrv := productservice.NewService(productRepo)
+
+	hnd := handlers.NewAdminHandler(authSvc, sessionSrv, categorySrv, productSrv)
 
 	//=>login-admin
 	r.GET("/login-admin", hnd.ShowLogin)
