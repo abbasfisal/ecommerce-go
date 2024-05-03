@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"github.com/abbasfisal/ecommerce-go/internal/admin/transport/http/requests"
 	"github.com/abbasfisal/ecommerce-go/internal/entity"
 	"gorm.io/gorm"
@@ -26,6 +27,7 @@ func (p Product) Store(ctx context.Context, req requests.CreateProductRequest, i
 		status = true
 	}
 	product := entity.Product{
+		CategoryID:    req.CategoryID,
 		Title:         title,
 		Slug:          strings.ReplaceAll(title, " ", "-"),
 		Sku:           strconv.Itoa(rand.IntN(9999)),
@@ -38,7 +40,7 @@ func (p Product) Store(ctx context.Context, req requests.CreateProductRequest, i
 
 	result := p.Db.Create(&product)
 	if result.RowsAffected <= 0 {
-		return entity.Product{}, result.Error
+		return entity.Product{}, errors.New("failed while creating new product")
 	}
 	return product, nil
 }
