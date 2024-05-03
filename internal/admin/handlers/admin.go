@@ -18,13 +18,20 @@ type AdminHandler struct {
 	authSrv     contract.AuthService
 	sessionSrv  sessionContract.SessionService
 	categorySrv contract.CategoryService
+	productSrv  contract.ProductService
 }
 
-func NewAdminHandler(authSrv contract.AuthService, sessionSrv sessionContract.SessionService, categorySrv contract.CategoryService) AdminHandler {
+func NewAdminHandler(
+	authSrv contract.AuthService,
+	sessionSrv sessionContract.SessionService,
+	categorySrv contract.CategoryService,
+	productSrv contract.ProductService,
+) AdminHandler {
 	return AdminHandler{
 		authSrv:     authSrv,
 		sessionSrv:  sessionSrv,
 		categorySrv: categorySrv,
+		productSrv:  productSrv,
 	}
 }
 
@@ -187,4 +194,101 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 		},
 	})
 	return
+}
+
+func (h AdminHandler) ShowCreateProduct(c *gin.Context) {
+
+	var tData template.Data
+	// get all categories
+	categories, err := h.categorySrv.GetAll(c)
+	if err != nil {
+		tData.Message = "create a new category"
+		tData.StatusCode = 404
+
+	} else {
+		tData.StatusCode = 200
+		tData.Data = map[string]any{"categories": categories}
+	}
+	c.HTML(http.StatusOK, "create-product.html", tData)
+	return
+}
+
+func (h AdminHandler) StoreProduct(c *gin.Context) {
+	fmt.Println("\n\t --- store product hit")
+	form, err := c.MultipartForm()
+	if err != nil {
+		fmt.Println("\n\t -- multipart err : ", err)
+		c.HTML(http.StatusInternalServerError, "create-product.html", template.Data{
+			Message:    "internal server error",
+			Error:      err.Error(),
+			StatusCode: 500,
+		})
+		return
+	}
+
+	var req requests.CreateProductRequest
+	for k, v := range c.Request.PostForm {
+		fmt.Println("key: ", k, "\t value : ", v)
+	}
+
+	//shouldBind
+	if err := c.ShouldBind(&req); err != nil {
+		fmt.Println("\n\t --- bind error ", err)
+		c.HTML(http.StatusBadRequest, "create-product.html", template.Data{
+			Message:    "bind post form goes wrong",
+			Error:      err.Error(),
+			StatusCode: 429,
+		})
+		return
+	}
+	//validation
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(&req); err != nil {
+		c.HTML(http.StatusBadRequest, "create-product.html", template.Data{
+			Message:    "validation error ",
+			Error:      err.Error(),
+			StatusCode: 429,
+		})
+		return
+	}
+	fmt.Println("\n\t--- request bind  ", req)
+
+	images := form.File["images"]
+	var imagesPath []string
+	for index, image := range images {
+		//todo: validate image
+		fmt.Println("\n\t - a ", index, "\n\t -- ", image.Filename)
+
+		imageUploadPath := util.GenerateFilename(image.Filename)
+		if err := c.SaveUploadedFile(image, "media/products/"+imageUploadPath); err != nil {
+			c.HTML(http.StatusInternalServerError, "create-product.html", template.Data{
+				Message:    "internal server error | storing images on disk",
+				Error:      err.Error(),
+				StatusCode: 500,
+			})
+			return
+		}
+		imagesPath = append(imagesPath, imageUploadPath)
+	}
+
+	//use product service
+	product, pErr := h.productSrv.Create(c, req, imagesPath)
+	if pErr != nil {
+		fmt.Println("\n\t --- failed product into db ", pErr)
+		c.HTML(http.StatusInternalServerError, "create-product.html", template.Data{
+			Message:    "internal server error | store product failed",
+			Error:      pErr.Error(),
+			StatusCode: 500,
+		})
+		return
+	}
+
+	fmt.Println("\n\t --- product created successfully ", product)
+	c.HTML(http.StatusCreated, "create-product.html", template.Data{
+		Message:    "product created successfully",
+		StatusCode: 201,
+		Data:       map[string]any{"product": product},
+	})
+	return
+	//use product repository to store
 }
