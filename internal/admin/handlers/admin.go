@@ -195,7 +195,21 @@ func (h AdminHandler) StoreCategory(c *gin.Context) {
 	})
 	return
 }
+func (h AdminHandler) ShowCategoryList(c *gin.Context) {
+	categories, err := h.categorySrv.GetAll(c)
+	if err != nil {
+		util.Error500(c)
+		return
+	}
 
+	c.HTML(http.StatusOK, "list-category.html", template.Data{
+		Message: "",
+		Data: map[string]any{
+			"Categories": categories,
+		},
+	})
+	return
+}
 func (h AdminHandler) ShowCreateProduct(c *gin.Context) {
 
 	var tData template.Data
@@ -215,18 +229,17 @@ func (h AdminHandler) ShowCreateProduct(c *gin.Context) {
 
 func (h AdminHandler) StoreProduct(c *gin.Context) {
 	fmt.Println("\n\t --- store product hit")
+	categories, _ := h.categorySrv.GetAll(c)
+
 	form, err := c.MultipartForm()
 	if err != nil {
 		fmt.Println("\n\t -- multipart err : ", err)
-		c.HTML(http.StatusInternalServerError, "create-product.html", template.Data{
-			Message:    "internal server error",
-			Error:      err.Error(),
-			StatusCode: 500,
-		})
+		util.Error500(c)
 		return
 	}
 
 	var req requests.CreateProductRequest
+	//delete below
 	for k, v := range c.Request.PostForm {
 		fmt.Println("key: ", k, "\t value : ", v)
 	}
@@ -238,6 +251,9 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 			Message:    "bind post form goes wrong",
 			Error:      err.Error(),
 			StatusCode: 429,
+			Data: map[string]any{
+				"categories": categories,
+			},
 		})
 		return
 	}
@@ -248,6 +264,9 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 			Message:    "validation error ",
 			Error:      err.Error(),
 			StatusCode: 429,
+			Data: map[string]any{
+				"categories": categories,
+			},
 		})
 		return
 	}
@@ -261,11 +280,8 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 
 		imageUploadPath := util.GenerateFilename(image.Filename)
 		if err := c.SaveUploadedFile(image, "media/products/"+imageUploadPath); err != nil {
-			c.HTML(http.StatusInternalServerError, "create-product.html", template.Data{
-				Message:    "internal server error | storing images on disk",
-				Error:      err.Error(),
-				StatusCode: 500,
-			})
+			fmt.Println("\n--- internal server error | storing uploaded image ", err)
+			util.Error500(c)
 			return
 		}
 		imagesPath = append(imagesPath, imageUploadPath)
@@ -274,12 +290,8 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 	//use product service
 	product, pErr := h.productSrv.Create(c, req, imagesPath)
 	if pErr != nil {
-		fmt.Println("\n\t --- failed product into db ", pErr)
-		c.HTML(http.StatusInternalServerError, "create-product.html", template.Data{
-			Message:    "internal server error | store product failed",
-			Error:      pErr.Error(),
-			StatusCode: 500,
-		})
+		fmt.Println("\n\t --- failed create a new Product", pErr)
+		util.Error500(c)
 		return
 	}
 
@@ -287,8 +299,32 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 	c.HTML(http.StatusCreated, "create-product.html", template.Data{
 		Message:    "product created successfully",
 		StatusCode: 201,
-		Data:       map[string]any{"product": product},
+		Data:       map[string]any{"product": product, "categories": categories},
 	})
 	return
-	//use product repository to store
+
+}
+
+func (h AdminHandler) ShowProductList(c *gin.Context) {
+	fmt.Println("\n show product list hit")
+	products, err := h.productSrv.List(c)
+	fmt.Println("\n\t======== products ", products)
+	if err != nil {
+		c.HTML(http.StatusOK, "list-product.html", template.Data{
+			Message:    "record not found",
+			Error:      err.Error(),
+			StatusCode: 404,
+		})
+		return
+	}
+
+	c.HTML(http.StatusOK, "list-product.html", template.Data{
+		Message:    "successfully get products",
+		StatusCode: 200,
+		Data: map[string]any{
+			"Products": products,
+		},
+	})
+	return
+
 }
