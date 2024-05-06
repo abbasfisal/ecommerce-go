@@ -22,6 +22,7 @@ func NewService(repo contract.ProductRepo) ProductService {
 func (p ProductService) Create(ctx context.Context, req requests.CreateProductRequest, images []string) (entity.Product, error) {
 	product, err := p.repo.Store(ctx, req, images)
 	if err != nil {
+		//remove uploaded images
 		for _, imgPath := range images {
 			if err := os.Remove(imgPath); err != nil {
 				fmt.Println("\n\t --- product image removing failed", err.Error())
@@ -31,4 +32,9 @@ func (p ProductService) Create(ctx context.Context, req requests.CreateProductRe
 		return entity.Product{}, err
 	}
 	return product, err
+}
+
+func (p ProductService) List(ctx context.Context) ([]entity.Product, error) {
+	fmt.Println("\n\t show product list service hit")
+	return p.repo.GetAll(ctx)
 }
