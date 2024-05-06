@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type Product struct {
 	gorm.Model
 	CategoryID    uint
+	Category      Category
 	Title         string
 	Slug          string
 	Sku           string
