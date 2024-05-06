@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>List Category</title>
+</head>
+<body>
+<h1>Category List</h1>
+
+<table align="center" border="1px">
+    <tr>
+        <td>#</td>
+        <td>category</td>
+        <td>title</td>
+        <td>slug</td>
+        <td>status</td>
+        <td>Operation</td>
+    </tr>
+
+    {{range $i,$v:=.Data.Categories}}
+        <tr>
+            <td>#</td>
+            <td>{{$i}}</td>
+            <td>{{$v.Title}}</td>
+            <td>{{$v.Slug}}</td>
+            {{if eq $v.Status true}}
+                <td>active</td>
+            {{else}}
+                <td>disable</td>
+            {{end}}
+
+            <td>
+                <a href="#{{$v.ID}}">Show</a> |
+                <a href="#{{$v.ID}}">Edit</a> |
+                <a href="#{{$v.ID}}">DeActive</a>
+            </td>
+        </tr>
+    {{end}}
+
+</table>
+</body>
+</html>

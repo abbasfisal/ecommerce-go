@@ -7,4 +7,5 @@ type Data struct {
 	StatusCode      int
 	Data            map[string]any
 	Meta            map[string]any
+	OldData         map[string]interface{}
 }
