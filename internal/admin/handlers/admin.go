@@ -216,17 +216,21 @@ func (h AdminHandler) ShowCategory(c *gin.Context) {
 	id := c.Param("id")
 	category, err := h.categorySrv.GetBy(c, id)
 	if err != nil {
-		fmt.Println("\n--- category Show : ", err)
-		c.HTML(http.StatusNotFound, "show-category.html", template.Data{Message: "record not found"})
+		c.HTML(http.StatusNotFound, "show-category.html", template.Data{
+			Message: "record not found",
+		})
 		return
 	}
 
-	fmt.Println("\n\t---- category fetched successfully")
+	//todo:how to path base url to show image =>we have to pass http:// or https://
 	c.HTML(http.StatusOK, "show-category.html", template.Data{
 		Message:    "successfully fetched category ",
 		StatusCode: 200,
 		Data: map[string]any{
 			"Category": category,
+		},
+		Meta: map[string]any{
+			"CategoryURL": string(c.Request.Host),
 		},
 	})
 	return
@@ -251,22 +255,16 @@ func (h AdminHandler) ShowCreateProduct(c *gin.Context) {
 }
 
 func (h AdminHandler) StoreProduct(c *gin.Context) {
-	fmt.Println("\n\t --- store product hit")
+
 	categories, _ := h.categorySrv.GetAll(c)
 
 	form, err := c.MultipartForm()
 	if err != nil {
-		fmt.Println("\n\t -- multipart err : ", err)
 		util.Error500(c)
 		return
 	}
 
 	var req requests.CreateProductRequest
-	//delete below
-	for k, v := range c.Request.PostForm {
-		fmt.Println("key: ", k, "\t value : ", v)
-	}
-
 	//shouldBind
 	if err := c.ShouldBind(&req); err != nil {
 		fmt.Println("\n\t --- bind error ", err)
@@ -293,13 +291,11 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 		})
 		return
 	}
-	fmt.Println("\n\t--- request bind  ", req)
 
 	images := form.File["images"]
 	var imagesPath []string
-	for index, image := range images {
+	for _, image := range images {
 		//todo: validate image
-		fmt.Println("\n\t - a ", index, "\n\t -- ", image.Filename)
 
 		imageUploadPath := util.GenerateFilename(image.Filename)
 		if err := c.SaveUploadedFile(image, "media/products/"+imageUploadPath); err != nil {
@@ -310,28 +306,25 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 		imagesPath = append(imagesPath, imageUploadPath)
 	}
 
-	//use product service
+	//call create product to store in db
 	product, pErr := h.productSrv.Create(c, req, imagesPath)
 	if pErr != nil {
-		fmt.Println("\n\t --- failed create a new Product", pErr)
 		util.Error500(c)
 		return
 	}
 
-	fmt.Println("\n\t --- product created successfully ", product)
 	c.HTML(http.StatusCreated, "create-product.html", template.Data{
 		Message:    "product created successfully",
 		StatusCode: 201,
 		Data:       map[string]any{"product": product, "categories": categories},
 	})
 	return
-
 }
 
 func (h AdminHandler) ShowProductList(c *gin.Context) {
-	fmt.Println("\n show product list hit")
+
 	products, err := h.productSrv.List(c)
-	fmt.Println("\n\t======== products ", products)
+
 	if err != nil {
 		c.HTML(http.StatusOK, "list-product.html", template.Data{
 			Message:    "record not found",
