@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Show Category</title>
+</head>
+
+<body>
+<h1>Show a Category</h1>
+<form action="#" method="" enctype="multipart/form-data">
+    Title:<input type="text" name="title" value="{{.Data.Category.Title}}" disabled>
+    <br>
+    Slug:<input type="text" name="slug" value="{{.Data.Category.Slug}}" disabled>
+    <br>
+    image: <img src="{{.Data.Category.Image}}" alt="">
+    <br>
+    {{if eq .Data.Category.Status true}}
+        status:<input disabled type="checkbox" checked name="status"><br>
+    {{else}}
+        status:<input disabled type="checkbox" name="status"><br>
+    {{end}}
+    <input type="submit" value="create new category">
+</form>
+
+{{if .Message}}
+    <br>
+    <b>Message : </b>{{.Message}}
+    <hr>
+{{end}}
+
+{{if .Error}}
+    <br>
+    <b>Error : </b>{{.Error}}
+    <hr>
+{{end}}
+
+{{if .Data}}
+    <br>
+    {{range $key,$value:=.Data}}
+        your key is {{$key}}
+        <br>
+        your value is : {{$value}}
+    {{end}}
+{{end}}
+
+</body>
+</html>

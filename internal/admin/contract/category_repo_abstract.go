@@ -9,4 +9,5 @@ import (
 type CategoryRepo interface {
 	Create(ctx context.Context, req *requests.CreateCategoryRequest, imageUploadedPath string) (entity.Category, error)
 	List(ctx context.Context) ([]entity.Category, error)
+	GetBy(ctx context.Context, ID string) (entity.Category, error)
 }

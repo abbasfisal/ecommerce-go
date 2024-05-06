@@ -43,6 +43,7 @@ func (s ServerApis) SetAdminRoutes(r *gin.Engine) {
 		grp.GET("/categories", hnd.ShowCreateCategory)
 		grp.POST("/categories", hnd.StoreCategory)
 		grp.GET("/categories/list", hnd.ShowCategoryList)
+		grp.GET("/categories/:id", hnd.ShowCategory)
 
 		grp.GET("/products", hnd.ShowCreateProduct)
 		grp.POST("/products", hnd.StoreProduct)

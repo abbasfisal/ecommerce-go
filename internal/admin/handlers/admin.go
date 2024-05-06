@@ -210,6 +210,29 @@ func (h AdminHandler) ShowCategoryList(c *gin.Context) {
 	})
 	return
 }
+
+func (h AdminHandler) ShowCategory(c *gin.Context) {
+
+	id := c.Param("id")
+	category, err := h.categorySrv.GetBy(c, id)
+	if err != nil {
+		fmt.Println("\n--- category Show : ", err)
+		c.HTML(http.StatusNotFound, "show-category.html", template.Data{Message: "record not found"})
+		return
+	}
+
+	fmt.Println("\n\t---- category fetched successfully")
+	c.HTML(http.StatusOK, "show-category.html", template.Data{
+		Message:    "successfully fetched category ",
+		StatusCode: 200,
+		Data: map[string]any{
+			"Category": category,
+		},
+	})
+	return
+
+}
+
 func (h AdminHandler) ShowCreateProduct(c *gin.Context) {
 
 	var tData template.Data

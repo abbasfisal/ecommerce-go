@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/abbasfisal/ecommerce-go/internal/admin/transport/http/requests"
 	"github.com/abbasfisal/ecommerce-go/internal/entity"
@@ -43,4 +44,13 @@ func (c Category) List(ctx context.Context) ([]entity.Category, error) {
 		return cats, result.Error
 	}
 	return cats, nil
+}
+
+func (c Category) GetBy(ctx context.Context, ID string) (entity.Category, error) {
+	var cat entity.Category
+	result := c.Db.Where("id=?", ID).First(&cat)
+	if result.RowsAffected <= 0 {
+		return cat, errors.New("no record found")
+	}
+	return cat, nil
 }

@@ -22,3 +22,7 @@ func (s Service) StoreCategory(ctx context.Context, req *requests.CreateCategory
 func (s Service) GetAll(ctx context.Context) ([]entity.Category, error) {
 	return s.repo.List(ctx)
 }
+
+func (s Service) GetBy(ctx context.Context, CategoryID string) (entity.Category, error) {
+	return s.repo.GetBy(ctx, CategoryID)
+}
