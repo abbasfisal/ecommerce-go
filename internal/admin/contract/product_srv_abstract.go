@@ -8,4 +8,5 @@ import (
 
 type ProductService interface {
 	Create(ctx context.Context, req requests.CreateProductRequest, images []string) (entity.Product, error)
+	List(ctx context.Context) ([]entity.Product, error)
 }

@@ -8,4 +8,5 @@ import (
 
 type ProductRepo interface {
 	Store(ctx context.Context, req requests.CreateProductRequest, images []string) (entity.Product, error)
+	GetAll(ctx context.Context) ([]entity.Product, error)
 }
