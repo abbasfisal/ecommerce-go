@@ -1,14 +1,62 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title> shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <style>
+        .pagination {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-<h1> shop</h1>
-<h2>you can buy much more cheaper ;0</h2>
+
+<!-- User List -->
+<h1>Product List</h1>
+<ul>
+    {{range .Data.Products}}
+        <li>{{.Title}}
+
+            <a href="/products/{{.ID}}">{{.ID}}see details</a>
+        </li>
+
+    {{end}}
+</ul>
+<!-- Pagination links -->
+<div class="pagination">
+
+    {{if .Data.HasPrev}}
+        <a href="?page={{.Data.PrevPage}}">&laquo; Prev</a>
+    {{end}}
+    {{if .Data.HasNext}}
+        {{range .Data.Pages}}
+
+            {{if eq . $.Data.CurrentPage}}
+                <a href="?page={{.}}" class="active">{{.}}</a>
+            {{else}}
+                <a href="?page={{.}}">{{.}}</a>
+            {{end}}
+        {{end}}
+
+        <a href="?page={{.Data.NextPage}}">Next &raquo;</a>
+    {{end}}
+</div>
+
 </body>
 </html>
