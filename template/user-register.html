@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>register</title>
+</head>
+<body>
+<h1>user Register</h1>
+
+<form action="/register" method="POST">
+    //csrf token required !
+    <table>
+        <tr>
+            <td>first name</td>
+            <td><input type="text" value="client1-firstname" name="first_name" placeholder="enter your first name"></td>
+        </tr>
+        <tr>
+            <td>last name</td>
+            <td><input type="text" value="client1-lastname" name="last_name" placeholder="enter your last  name"></td>
+        </tr>
+        <tr>
+            <td>mobile</td>
+            <td><input type="number" value="09351111111" name="mobile" placeholder="enter your mobile number"></td>
+        </tr>
+        <tr>
+            <td>password</td>
+            <td><input type="text" value="password" name="password" placeholder="enter your password"></td>
+        </tr>
+        <tr>
+            <td>confirm password</td>
+            <td><input type="text" value="password" name="confirm_password" placeholder="confirm your password"></td>
+        </tr>
+        <tr>
+            <td>phase</td>
+            <td>
+                <select name="phase">
+                    <option value="a">phase a</option>
+                    <option value="a">phase b</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>national code</td>
+            <td><input type="number" value="0000000000" name="national_code" placeholder="enter your national code "></td>
+        </tr>
+        <tr>
+            <td>Plate Number</td>
+            <td><input type="text" value="1" name="number" placeholder="enter your plate number"></td>
+        </tr>
+        <tr>
+            <td>Floor Number</td>
+            <td><input type="number" value="1" name="floor" placeholder="enter your floor number"></td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td><textarea name="description" placeholder="enter your adddress fully ;0" cols="30" rows="10">this is description</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+
+    </table>
+    <input type="submit" value="register ;)">
+
+</form>
+{{.}}
+</body>
+</html>
