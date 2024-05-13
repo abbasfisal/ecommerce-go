@@ -6,6 +6,7 @@ type Product struct {
 	gorm.Model
 	CategoryID    uint
 	Category      Category
+	ImageProducts []ImageProduct
 	Title         string
 	Slug          string
 	Sku           string
