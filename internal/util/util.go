@@ -1,10 +1,15 @@
 package util
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"github.com/google/uuid"
+	"log"
 	"path/filepath"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -19,4 +24,54 @@ func GenerateFilename(originalFilename string) string {
 	extension := filepath.Ext(originalFilename)
 
 	return fmt.Sprintf("%s/%s/%s/%s%s", year, month, day, random, extension)
+}
+
+func checkNationalCode(code string) bool {
+
+	reg, err := regexp.Compile("/[^0-9]/")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	code = reg.ReplaceAllString(code, "")
+	if len(code) != 10 {
+		return false
+	}
+
+	codes := strings.Split(code, "")
+	last, err := strconv.Atoi(codes[9])
+
+	i := 10
+	sum := 0
+
+	for in, el := range codes {
+		temp, err := strconv.Atoi(el)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if in == 9 {
+			break
+		}
+
+		sum += temp * i
+		i -= 1
+	}
+
+	mod := sum % 11
+	if mod >= 2 {
+		mod = 11 - mod
+	}
+	return mod == last
+}
+
+func GenerateCSRFToken() string {
+	token := make([]byte, 32)
+	_, err := rand.Read(token)
+	if err != nil {
+		panic(err)
+	}
+	return base64.StdEncoding.EncodeToString(token)
 }
