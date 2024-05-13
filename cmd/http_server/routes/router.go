@@ -37,6 +37,9 @@ func (s ServerApis) Run() {
 	//----------- client routes
 	s.setClientRoutes(engin)
 
+	//----------- public routes
+	s.SetPublicRoutes(engin)
+
 	err := engin.Run(":" + s.Config.AppPort)
 	if err != nil {
 		log.Fatal("server error : ", err)
