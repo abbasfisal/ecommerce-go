@@ -23,8 +23,8 @@ func (s ServerApis) SetPublicRoutes(r *gin.Engine) {
 	publicSrv := service.NewPublicService(publicRepo)
 
 	//handler
-	hndl := handlers.NewPublic(publicSrv, sessionSrv)
+	hdl := handlers.NewPublic(publicSrv, sessionSrv)
 
-	r.GET("/", hndl.ShowIndexSite)
-
+	r.GET("/", hdl.ShowIndexSite)
+	r.GET("/products/:id", hdl.ShowByID)
 }

@@ -7,4 +7,5 @@ import (
 
 type PublicRepo interface {
 	GetAllProducts(ctx context.Context, offset, perPage int) (products []entity.Product, totalCount int64, error error)
+	SelectProductBy(ctx context.Context, id string) (entity.Product, error)
 }

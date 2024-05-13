@@ -68,3 +68,27 @@ func (h Public) ShowIndexSite(c *gin.Context) {
 	})
 	return
 }
+
+func (h Public) ShowByID(c *gin.Context) {
+	fmt.Println("\n\t--- show by id hit")
+
+	product, err := h.PublicSrv.GetProductBy(context.TODO(), c.Param("id"))
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			fmt.Println("\n\t ---- pubic select product by id not found ", err)
+			c.HTML(http.StatusNotFound, "404.html", nil)
+			return
+		} else {
+			fmt.Println("\n\t --- internal error for select product ", err)
+			c.HTML(http.StatusInternalServerError, "500.html", nil)
+			return
+		}
+	}
+
+	c.HTML(http.StatusOK, "public-show-product.html", template.Data{
+		Data: gin.H{
+			"Product": product,
+		},
+	})
+	return
+}

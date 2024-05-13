@@ -27,3 +27,13 @@ func (p PublicRepository) GetAllProducts(ctx context.Context, offset int, perPag
 	}
 	return products, totalCount, nil
 }
+
+func (p PublicRepository) SelectProductBy(ctx context.Context, id string) (entity.Product, error) {
+	var product entity.Product
+
+	if err := p.Db.Preload("Category", "status=?", true).Preload("ImageProducts").Where("id=? AND status=?", id, true).First(&product).Error; err != nil {
+		return product, err
+	}
+
+	return product, nil
+}

@@ -7,4 +7,5 @@ import (
 
 type PublicSrv interface {
 	GetProducts(ctx context.Context, perPage int) (products []entity.Product, totalCount int64, error error)
+	GetProductBy(ctx context.Context, id string) (entity.Product, error)
 }

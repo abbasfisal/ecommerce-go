@@ -24,3 +24,9 @@ func (p PublicService) GetProducts(ctx context.Context, page int) (products []en
 	offset := (page - 1) * PerPage
 	return p.repo.GetAllProducts(ctx, offset, PerPage)
 }
+func (p PublicService) GetProductBy(ctx context.Context, id string) (entity.Product, error) {
+	if id == "" {
+		id = "1"
+	}
+	return p.repo.SelectProductBy(ctx, id)
+}
