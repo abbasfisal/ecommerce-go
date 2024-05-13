@@ -15,7 +15,7 @@
     <br>
     Slug:<input type="text" name="slug" value="{{.Data.Category.Slug}}" disabled>
     <br>
-    image: <img src="{{.Data.Category.Image}}" alt="">
+    image: <img src="127.0.0.1:8082/media/categories/{{.Data.Category.Image}}" alt="">
     <br>
     {{if eq .Data.Category.Status true}}
         status:<input disabled type="checkbox" checked name="status"><br>
@@ -36,15 +36,7 @@
     <b>Error : </b>{{.Error}}
     <hr>
 {{end}}
-
-{{if .Data}}
-    <br>
-    {{range $key,$value:=.Data}}
-        your key is {{$key}}
-        <br>
-        your value is : {{$value}}
-    {{end}}
-{{end}}
+{{.Meta}}
 
 </body>
 </html>
