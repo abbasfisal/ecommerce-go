@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"log"
+	"math"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -74,4 +75,20 @@ func GenerateCSRFToken() string {
 		panic(err)
 	}
 	return base64.StdEncoding.EncodeToString(token)
+}
+
+func GeneratePageNumbers(currentPage int, totalPages int) []int {
+	var pages []int
+
+	// Calculate the number of pages to display
+	numPagesToShow := int(math.Min(float64(totalPages), 4)) // Show up to 5 pages
+	startPage := int(math.Max(float64(currentPage-2), 1))
+	endPage := int(math.Min(float64(startPage+numPagesToShow-1), float64(totalPages)))
+
+	// Generate page numbers
+	for i := startPage; i <= endPage; i++ {
+		pages = append(pages, i)
+	}
+
+	return pages
 }
