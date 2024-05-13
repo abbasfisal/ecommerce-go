@@ -7,3 +7,7 @@ type ImageProduct struct {
 	ProductID uint
 	Path      string
 }
+
+func (ImageProduct) TableName() string {
+	return "image_product"
+}
