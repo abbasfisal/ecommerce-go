@@ -6,9 +6,11 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName   string
-	LastName    string
-	PhoneNumber string
-	Password    string
-	Type        string
+	FirstName    string
+	LastName     string
+	PhoneNumber  string
+	NationalCode string
+	Password     string
+	Type         string
+	Address      Address
 }
