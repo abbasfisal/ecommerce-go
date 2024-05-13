@@ -24,15 +24,18 @@ func (s ServerApis) Run() {
 
 	engin := gin.New()
 	gin.SetMode(gin.DebugMode)
-	engin.LoadHTMLGlob("./template/admin/*")
+	engin.LoadHTMLGlob("./template/*.html")
 
 	engin.Static("/public", "./public")
-
-	//todo : add route for 404 , 500
+	engin.Static("/media", "./media")
 
 	SetHealthRoutes(engin.Group("/health"))
 
+	//----------- admin routes
 	s.SetAdminRoutes(engin)
+
+	//----------- client routes
+	s.setClientRoutes(engin)
 
 	err := engin.Run(":" + s.Config.AppPort)
 	if err != nil {
