@@ -52,3 +52,13 @@ func (a AuthenticateRepository) CreateNewClient(ctx context.Context, req request
 
 	return user, nil
 }
+
+func (a AuthenticateRepository) GetUserBy(ctx context.Context, req requests.LoginRequest) (entity.User, error) {
+	//todo: encrypt password
+	var user entity.User
+
+	if err := a.Db.Where("phone_number=? and password = ? ", req.Mobile, req.Password).First(&user).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}

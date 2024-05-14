@@ -27,3 +27,7 @@ func (a AuthenticateService) CheckUniquePhoneAndNIC(ctx context.Context, phone s
 func (a AuthenticateService) Register(ctx context.Context, req requests.CreateRegisterRequest) (entity.User, error) {
 	return a.Repo.CreateNewClient(ctx, req)
 }
+
+func (a AuthenticateService) Login(ctx context.Context, req requests.LoginRequest) (entity.User, error) {
+	return a.Repo.GetUserBy(ctx, req)
+}
