@@ -8,8 +8,12 @@
     <title>Document</title>
 </head>
 <body>
+profile
+<br>
+cart
+<hr>
+<a href="/"> index</a>
 <h1>show product </h1>
-
 <h3>category : {{.Data.Product.Category.Title}}</h3>
 <h3>Product Images :
     {{range .Data.Product.ImageProducts }}
@@ -24,5 +28,12 @@
     Product Quantity : {{.Data.Product.Quantity}} <br>
     Product Description : {{.Data.Product.Description}} <br>
 </h3>
+
+<form action="/products/add-cart" method="post">
+    <input type="hidden" name="product" value="{{.Data.Product.ID}}">
+    <input type="button" value="Add to Cart">
+    <input type="number" placeholder="number of order">
+</form>
+
 </body>
 </html>
