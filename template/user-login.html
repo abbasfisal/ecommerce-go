@@ -5,9 +5,39 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>login</title>
 </head>
 <body>
 <h1>user login</h1>
+<form action="/login" method="POST">
+
+    //csrf token
+    <table align="center">
+        <tr>
+            <td>mobile</td>
+            <td><input type="number" name="mobile" value="09350000000" placeholder="enter your mobile number"></td>
+        </tr>
+        <tr>
+            <td>password</td>
+            <td><input type="text" name="password" value="password" placeholder="enter your password"></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" value="login">
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><a href="/register">Create Account</a></td>
+        </tr>
+    </table>
+
+
+</form>
+<hr>
+
+{{.}}
+
 </body>
 </html>
