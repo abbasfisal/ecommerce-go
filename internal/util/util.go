@@ -8,6 +8,7 @@ import (
 	"log"
 	"math"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -91,4 +92,17 @@ func GeneratePageNumbers(currentPage int, totalPages int) []int {
 	}
 
 	return pages
+}
+
+// StructToMap generate a map from a struct which key is struct field name
+func StructToMap(yourStruct interface{}) map[string]interface{} {
+	val := reflect.ValueOf(yourStruct)
+	structMap := make(map[string]interface{})
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Type().Field(i)
+		structMap[field.Name] = val.Field(i).Interface()
+	}
+
+	return structMap
 }
