@@ -8,22 +8,27 @@ import (
 	"github.com/abbasfisal/ecommerce-go/internal/client/contract"
 	"github.com/abbasfisal/ecommerce-go/internal/client/requests"
 	"github.com/abbasfisal/ecommerce-go/internal/pkg"
+	PublicSrv "github.com/abbasfisal/ecommerce-go/internal/public/contract"
+	"github.com/abbasfisal/ecommerce-go/internal/public/service"
 	sessionContract "github.com/abbasfisal/ecommerce-go/internal/session/contract"
 	"github.com/abbasfisal/ecommerce-go/internal/util"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
+	"strconv"
 )
 
 type Client struct {
 	authSrv    contract.AuthService
 	sessionSrv sessionContract.SessionService
+	publicSrv  PublicSrv.PublicSrv
 }
 
-func NewClient(clientAuthSrv contract.AuthService, sessionSrv sessionContract.SessionService) Client {
+func NewClient(clientAuthSrv contract.AuthService, sessionSrv sessionContract.SessionService, publicSrv PublicSrv.PublicSrv) Client {
 	return Client{
 		authSrv:    clientAuthSrv,
 		sessionSrv: sessionSrv,
+		publicSrv:  publicSrv,
 	}
 }
 
@@ -45,12 +50,45 @@ func (h Client) checkClientCookie(c *gin.Context) bool {
 		fmt.Println("session exist")
 		user, err := h.sessionSrv.GetUserBy(context.TODO(), sessionID)
 		if err == nil && user.ID > 0 {
+
+			page, errPage := strconv.Atoi(c.Query("page"))
+			if errPage != nil || page < 1 {
+				page = 1
+			}
+
+			products, totalCount, err := h.publicSrv.GetProducts(context.TODO(), page)
+
+			if totalCount == 0 {
+				if !errors.Is(err, gorm.ErrRecordNotFound) {
+					fmt.Println("\n show all products internal error ", err)
+					c.HTML(http.StatusInternalServerError, "500.html", nil)
+					return true
+				}
+
+				fmt.Println("\n show all products , no records was exists  ", err)
+				c.HTML(http.StatusOK, "index.html", template.Data{
+					Message:    "there is no products in table",
+					StatusCode: 404,
+				})
+
+				return true
+			}
+
 			fmt.Println("here ", sessionID)
 			c.HTML(http.StatusPermanentRedirect, "index.html", template.Data{
 				Data: gin.H{
+					"Products":    products,
+					"HasPrev":     page > 1,
+					"PrevPage":    page - 1,
+					"Pages":       util.GeneratePageNumbers(page, int(totalCount)),
+					"HasNext":     len(products) == service.PerPage,
+					"NextPage":    page + 1,
+					"CurrentPage": page,
+
 					"User": user,
 				},
 			})
+
 			return true
 		} else {
 			//delete session
