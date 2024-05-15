@@ -11,27 +11,41 @@
 <h1>user Register</h1>
 
 <form action="/register" method="POST">
+    {{.OldData}}
+    <hr>
+
+
     //csrf token required !
+
     <table>
+
         <tr>
             <td>first name</td>
-            <td><input type="text" value="client1-firstname" name="first_name" placeholder="enter your first name"></td>
+
+            <td><input type="text" value="{{if .OldData.FirstName}}{{.OldData.FirstName}}{{end}}" name="first_name"
+                       placeholder="enter your first name"></td>
         </tr>
         <tr>
             <td>last name</td>
-            <td><input type="text" value="client1-lastname" name="last_name" placeholder="enter your last  name"></td>
+            <td><input type="text" value="{{if .OldData.LastName}}{{.OldData.LastName}}{{end}}" name="last_name"
+                       placeholder="enter your last  name"></td>
         </tr>
         <tr>
             <td>mobile</td>
-            <td><input type="number" value="09351111111" name="mobile" placeholder="enter your mobile number"></td>
+            <td>
+                <input type="number"
+                       value="{{if .OldData.Mobile}}{{.OldData.Mobile}}{{end}}"
+                       name="mobile"
+                       placeholder="enter your mobile number">
+            </td>
         </tr>
         <tr>
             <td>password</td>
-            <td><input type="text" value="password" name="password" placeholder="enter your password"></td>
+            <td><input type="text" name="password" placeholder="enter your password"></td>
         </tr>
         <tr>
             <td>confirm password</td>
-            <td><input type="text" value="password" name="confirm_password" placeholder="confirm your password"></td>
+            <td><input type="text" name="confirm_password" placeholder="confirm your password"></td>
         </tr>
         <tr>
             <td>phase</td>
@@ -44,19 +58,24 @@
         </tr>
         <tr>
             <td>national code</td>
-            <td><input type="number" value="0000000000" name="national_code" placeholder="enter your national code "></td>
+            <td><input type="number" value="{{if .OldData.NationalCode}}{{.OldData.NationalCode}}{{end}}"
+                       name="national_code" placeholder="enter your national code ">
+            </td>
         </tr>
         <tr>
             <td>Plate Number</td>
-            <td><input type="text" value="1" name="number" placeholder="enter your plate number"></td>
+            <td><input type="text" value="{{if .OldData.Number}}{{.OldData.Number}}{{end}}" name="number"
+                       placeholder="enter your plate number"></td>
         </tr>
         <tr>
             <td>Floor Number</td>
-            <td><input type="number" value="1" name="floor" placeholder="enter your floor number"></td>
+            <td><input type="number" value="{{if .OldData.Floor}}{{.OldData.Floor}}{{end}}" name="floor"
+                       placeholder="enter your floor number"></td>
         </tr>
         <tr>
             <td>Description</td>
-            <td><textarea name="description" placeholder="enter your adddress fully ;0" cols="30" rows="10">this is description</textarea>
+            <td><textarea name="description" placeholder="enter your address fully ;0" cols="30"
+                          rows="10">{{if .OldData.Description}}{{.OldData.Description}}{{end}}"</textarea>
             </td>
         </tr>
         <tr>
@@ -73,9 +92,23 @@
         </tr>
 
     </table>
+
+
     <input type="submit" value="register ;)">
 
 </form>
-{{.}}
+{{if .ValidationError}}
+    <ul>
+        {{range  $items:=.ValidationError}}
+            {{range $field , $msg:=$items}}
+                <li>{{$field}} = {{$msg}} </li>
+            {{end}}
+        {{end}}
+    </ul>
+{{end}}
+<hr>
+{{if .OldData.ConfirmPassword}}
+    {{.OldData.ConfirmPassword}}
+{{end}}
 </body>
 </html>
