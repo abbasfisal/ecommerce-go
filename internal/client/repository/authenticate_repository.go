@@ -21,8 +21,7 @@ func NewAuthenticateRepository(db *gorm.DB) AuthenticateRepository {
 }
 func (a AuthenticateRepository) IsUniquePhoneAndNIC(ctx context.Context, phone string, nic string) bool {
 	var count int64
-	a.Db.Where("phone_number = ? or national_code = ? ", phone, nic).Count(&count)
-
+	a.Db.Model(&entity.User{}).Where("phone_number = ? or national_code = ? ", phone, nic).Count(&count)
 	return count == 0
 }
 
