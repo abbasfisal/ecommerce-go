@@ -236,8 +236,6 @@ func (h Client) PostLoginForm(c *gin.Context) {
 		}
 	}
 
-	fmt.Println("user found successfully", user)
-
 	//generate session and store it in db
 	session, SessErr := h.sessionSrv.Generate(context.TODO(), user)
 	if SessErr != nil {
