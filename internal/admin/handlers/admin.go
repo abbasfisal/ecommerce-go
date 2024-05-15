@@ -5,6 +5,7 @@ import (
 	"github.com/abbasfisal/ecommerce-go/internal/admin/contract"
 	"github.com/abbasfisal/ecommerce-go/internal/admin/transport/http/requests"
 	"github.com/abbasfisal/ecommerce-go/internal/admin/transport/http/template"
+	"github.com/abbasfisal/ecommerce-go/internal/pkg"
 	sessionContract "github.com/abbasfisal/ecommerce-go/internal/session/contract"
 	"github.com/abbasfisal/ecommerce-go/internal/util"
 	"github.com/gin-gonic/gin"
@@ -279,8 +280,10 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 		return
 	}
 	//validation
-	validate := validator.New(validator.WithRequiredStructEnabled())
+	//validate := validator.New(validator.WithRequiredStructEnabled())
+	validate := pkg.NewValidate()
 	if err := validate.Struct(&req); err != nil {
+		ve := pkg.CollectAndTranslateValidationErrors(err)
 		c.HTML(http.StatusBadRequest, "create-product.html", template.Data{
 			Message:    "validation error ",
 			Error:      err.Error(),
@@ -288,6 +291,8 @@ func (h AdminHandler) StoreProduct(c *gin.Context) {
 			Data: map[string]any{
 				"categories": categories,
 			},
+			ValidationError: ve,
+			OldData:         util.StructToMap(req),
 		})
 		return
 	}
