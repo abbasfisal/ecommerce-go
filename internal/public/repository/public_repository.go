@@ -21,7 +21,7 @@ func (p PublicRepository) GetAllProducts(ctx context.Context, offset int, perPag
 
 	p.Db.Model(&entity.Product{}).Count(&totalCount)
 
-	if err := p.Db.Offset(offset).Limit(perPage).Find(&products).Error; err != nil {
+	if err := p.Db.Offset(offset).Limit(perPage).Where("status=?", true).Find(&products).Error; err != nil {
 		fmt.Println("\n-- error in repo", err)
 		return products, totalCount, err
 	}
