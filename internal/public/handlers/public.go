@@ -40,7 +40,6 @@ func (h Public) ShowIndexSite(c *gin.Context) {
 	fmt.Println("\n products ", products, totalCount, err)
 	if totalCount == 0 {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			//
 			fmt.Println("\n show all products internal error ", err)
 			c.HTML(http.StatusInternalServerError, "500.html", nil)
 			return
@@ -51,6 +50,7 @@ func (h Public) ShowIndexSite(c *gin.Context) {
 			Message:    "there is no products in table",
 			StatusCode: 404,
 		})
+
 		return
 	}
 
