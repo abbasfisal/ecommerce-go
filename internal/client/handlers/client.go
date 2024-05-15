@@ -7,7 +7,9 @@ import (
 	"github.com/abbasfisal/ecommerce-go/internal/admin/transport/http/template"
 	"github.com/abbasfisal/ecommerce-go/internal/client/contract"
 	"github.com/abbasfisal/ecommerce-go/internal/client/requests"
+	"github.com/abbasfisal/ecommerce-go/internal/pkg"
 	sessionContract "github.com/abbasfisal/ecommerce-go/internal/session/contract"
+	"github.com/abbasfisal/ecommerce-go/internal/util"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -60,17 +62,15 @@ func (h Client) checkClientCookie(c *gin.Context) bool {
 }
 
 func (h Client) PostRegister(c *gin.Context) {
-	fmt.Println("hi")
+
 	if h.checkClientCookie(c) {
 		return
 	}
 
-	fmt.Println("here33")
+	_ = c.Request.ParseForm()
 	for key, val := range c.Request.PostForm {
 		fmt.Println(" key : ", key, " | value : ", val, " \n ")
 	}
-	fmt.Println("here 444")
-	//check cookie exist? ->redirect (index)
 
 	var req requests.CreateRegisterRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -81,20 +81,37 @@ func (h Client) PostRegister(c *gin.Context) {
 	}
 	fmt.Println(req)
 
-	//validate
+	//-----validate
+	validate := pkg.NewValidate()
+	if err := validate.Struct(&req); err != nil {
+		validationError := pkg.CollectAndTranslateValidationErrors(err)
+
+		c.HTML(http.StatusTemporaryRedirect, "user-register.html", template.Data{
+			Error:           "validation failed",
+			ValidationError: validationError,
+			OldData:         util.StructToMap(req),
+		})
+		return
+	}
 
 	//check uniqueness of mobile and nic
 	if ok := h.authSrv.CheckUniquePhoneAndNIC(context.TODO(), req.Mobile, req.NationalCode); !ok {
 		c.HTML(http.StatusBadRequest, "user-register.html", template.Data{
 			Error: "phone number Or national code is already exists",
+			ValidationError: []map[string]any{
+				{"Mobile|NIC": "شماره موبایل یا کد ملی تکراری است"},
+			},
+			OldData: util.StructToMap(req),
 		})
 		return
 	}
 
+	//--- end validation
 	//call service // call repo // store
 	user, err := h.authSrv.Register(context.TODO(), req)
 	if err != nil {
-		c.HTML(http.StatusInternalServerError, "user-register.html", template.Data{
+		fmt.Println("error register a new user  ", err)
+		c.HTML(http.StatusInternalServerError, "500.html", template.Data{
 			Error:      "Failed to register a client ",
 			Meta:       gin.H{"error_text": err},
 			StatusCode: 500,
@@ -118,7 +135,7 @@ func (h Client) PostRegister(c *gin.Context) {
 	c.HTML(http.StatusPermanentRedirect, "index.html", gin.H{
 		"msg": "user loggedId",
 		"data": gin.H{
-			"user": user,
+			"User": user,
 		},
 	})
 	return
